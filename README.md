@@ -1,0 +1,1 @@
+# Project made to learn how to consume APIs
