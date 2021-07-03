@@ -9,3 +9,25 @@ const conversionPrecisionParagraph = document
 
 const APIKey = 'e3883a0683a029c56239ccac'
 const requestURL = `https://v6.exchangerate-api.com/v6/${APIKey}/latest/USD`
+
+const createOptionElement = () => {
+  return document.createElement('option')
+}
+
+const fetchExchangeData = async () => {
+  try {
+    const response = await fetch(requestURL)
+
+    if (!response.ok) {
+      throw new Error('Não foi possível obter as informações.')
+    }
+
+    const exchangeData = await response.json()
+
+    return exchangeData
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+
+fetchExchangeData()
