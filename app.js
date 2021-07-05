@@ -8,26 +8,46 @@ const conversionPrecisionParagraph = document
   .querySelector('[data-js="conversion-precision"]')
 
 const APIKey = 'e3883a0683a029c56239ccac'
-const requestURL = `https://v6.exchangerate-api.com/v6/${APIKey}/latest/USD`
+const getCurrencyEndPoint = currency =>
+  `https://v6.exchangerate-api.com/v6/${APIKey}/latest/${currency}`
 
 const createOptionElement = () => {
   return document.createElement('option')
 }
 
-const fetchExchangeData = async () => {
-  try {
-    const response = await fetch(requestURL)
+const displayOptionsWithExchangeData = currencyRates => {
+  const currencyDataKeys = Object.keys(currencyRates)
 
-    if (!response.ok) {
+  currencyDataKeys.forEach(key => {
+    const option1 = createOptionElement()
+    const option2 = createOptionElement()
+
+    option1.textContent = key
+    option2.textContent = key
+    currencyOneSelect.insertAdjacentElement('beforeend', option1)
+    currencyTwoSelect.insertAdjacentElement('beforeend', option2)
+  })
+}
+
+const fetchExchangeData = async endPoint => {
+  try {
+    const response = await fetch(endPoint)
+
+    if (response.result === 'error') {
       throw new Error('Não foi possível obter as informações.')
     }
 
-    const exchangeData = await response.json()
-
-    return exchangeData
+    return response.json()
   } catch (error) {
     console.log(error.message)
   }
 }
 
-fetchExchangeData()
+const setExchangeInfo = async currency => {
+  const { conversion_rates } = await
+    fetchExchangeData(getCurrencyEndPoint(currency))
+
+  displayOptionsWithExchangeData(conversion_rates)
+}
+
+setExchangeInfo('USD')
