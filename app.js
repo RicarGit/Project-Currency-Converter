@@ -55,7 +55,11 @@ const setExchangeInfo = async (currency1, currency2) => {
   exchangeRateData = await fetchExchangeData(getCurrencyEndPoint(currency1))
   const { conversion_rates } = exchangeRateData
 
-  displayOptionsWithExchangeData(conversion_rates)
+  displayOptionsWithExchangeData(conversion_rates, currency2)
+
+  conversionPrecisionParagraph.textContent =
+    `1 ${currency1} = ${conversion_rates[currency2]} ${currency2}`
+  convertedValueParagraph.textContent = conversion_rates[currency2].toFixed(2)
 }
 
 setExchangeInfo('USD')
