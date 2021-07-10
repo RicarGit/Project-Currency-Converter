@@ -62,4 +62,10 @@ const setExchangeInfo = async (currency1, currency2) => {
   convertedValueParagraph.textContent = conversion_rates[currency2].toFixed(2)
 }
 
-setExchangeInfo('USD')
+currencyOneTimesInput.addEventListener('input', event => {
+  const inputTimes = event.target.value
+  const { conversion_rates } = exchangeRateData
+
+  convertedValueParagraph.textContent =
+    inputTimes * conversion_rates[currencyTwoSelect.value].toFixed(2)
+})
