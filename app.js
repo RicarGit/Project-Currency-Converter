@@ -51,9 +51,9 @@ const fetchExchangeData = async endPoint => {
   }
 }
 
-const setExchangeInfo = async currency => {
-  const { conversion_rates } = await
-    fetchExchangeData(getCurrencyEndPoint(currency))
+const setExchangeInfo = async (currency1, currency2) => {
+  exchangeRateData = await fetchExchangeData(getCurrencyEndPoint(currency1))
+  const { conversion_rates } = exchangeRateData
 
   displayOptionsWithExchangeData(conversion_rates)
 }
