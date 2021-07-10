@@ -8,6 +8,9 @@ const conversionPrecisionParagraph = document
   .querySelector('[data-js="conversion-precision"]')
 
 const APIKey = 'e3883a0683a029c56239ccac'
+
+let exchangeRateData = {}
+
 const getCurrencyEndPoint = currency =>
   `https://v6.exchangerate-api.com/v6/${APIKey}/latest/${currency}`
 
