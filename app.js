@@ -18,7 +18,7 @@ const createOptionElement = () => {
   return document.createElement('option')
 }
 
-const displayOptionsWithExchangeData = currencyRates => {
+const displayOptionsWithExchangeData = (currencyRates, currency2) => {
   const currencyDataKeys = Object.keys(currencyRates)
 
   currencyDataKeys.forEach(key => {
@@ -27,6 +27,11 @@ const displayOptionsWithExchangeData = currencyRates => {
 
     option1.textContent = key
     option2.textContent = key
+
+    if (key === currency2) {
+      option2.setAttribute('selected', '')
+    }
+
     currencyOneSelect.insertAdjacentElement('beforeend', option1)
     currencyTwoSelect.insertAdjacentElement('beforeend', option2)
   })
