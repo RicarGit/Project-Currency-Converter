@@ -62,6 +62,18 @@ const setExchangeInfo = async (currency1, currency2) => {
   convertedValueParagraph.textContent = conversion_rates[currency2].toFixed(2)
 }
 
+currencyOneSelect.addEventListener('input', async event => {
+  const inputValue = event.target.value
+  exchangeRateData = await fetchExchangeData(getCurrencyEndPoint(inputValue))
+  const { conversion_rates } = exchangeRateData
+
+  convertedValueParagraph.textContent =
+    (conversion_rates[currencyTwoSelect.value]).toFixed(2)
+
+  conversionPrecisionParagraph.textContent =
+    `1 ${currencyOneSelect.value} = ${conversion_rates[currencyTwoSelect.value]} ${currencyTwoSelect.value}`
+})
+
 currencyTwoSelect.addEventListener('input', event => {
   const inputValue = event.target.value
   const { conversion_rates } = exchangeRateData
