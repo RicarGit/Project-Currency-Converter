@@ -67,7 +67,7 @@ currencyOneTimesInput.addEventListener('input', event => {
   const { conversion_rates } = exchangeRateData
 
   convertedValueParagraph.textContent =
-    inputTimes * conversion_rates[currencyTwoSelect.value].toFixed(2)
+    (inputTimes * conversion_rates[currencyTwoSelect.value]).toFixed(2)
 })
 
 setExchangeInfo('USD', 'BRL')
