@@ -37,22 +37,12 @@ const displayOptionsWithExchangeData = (currencyRates, currency2) => {
   })
 }
 
-const fetchExchangeData = async endPoint => {
-  try {
-    const response = await fetch(endPoint)
-
-    if (response.result === 'error') {
-      throw new Error('Não foi possível obter as informações.')
-    }
-
-    return response.json()
-  } catch (error) {
-    alert(error.message)
-  }
+const updateConvertedParagraph = currency2 => {
+  const { conversion_rates } = exchangeRateData
+  convertedValueParagraph.textContent = conversion_rates[currency2].toFixed(2)
 }
 
-const setExchangeInfo = async (currency1, currency2) => {
-  exchangeRateData = await fetchExchangeData(getCurrencyEndPoint(currency1))
+const updateConversionPrecisionParagraph = (currency1, currency2) => {
   const { conversion_rates } = exchangeRateData
 
   displayOptionsWithExchangeData(conversion_rates, currency2)
@@ -62,9 +52,7 @@ const setExchangeInfo = async (currency1, currency2) => {
   convertedValueParagraph.textContent = conversion_rates[currency2].toFixed(2)
 }
 
-currencyOneSelect.addEventListener('input', async event => {
-  const inputValue = event.target.value
-  exchangeRateData = await fetchExchangeData(getCurrencyEndPoint(inputValue))
+const updateMultipliedConvertedParagraph = (multiplier, currency2) => {
   const { conversion_rates } = exchangeRateData
 
   convertedValueParagraph.textContent =
