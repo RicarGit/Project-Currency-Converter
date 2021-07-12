@@ -8,32 +8,43 @@ const conversionPrecisionParagraph = document
   .querySelector('[data-js="conversion-precision"]')
 
 const APIKey = 'e3883a0683a029c56239ccac'
-
 let exchangeRateData = {}
+
+const createOptionElement = () => document.createElement('option')
 
 const getCurrencyEndPoint = currency =>
   `https://v6.exchangerate-api.com/v6/${APIKey}/latest/${currency}`
 
-const createOptionElement = () => {
-  return document.createElement('option')
+const fetchExchangeData = async endpoint => {
+  try {
+    const response = await fetch(endpoint)
+
+    if (response.result === 'error') {
+      throw new Error('Não foi possível obter as informações.')
+    }
+
+    return response.json()
+  } catch (error) {
+    alert(error.message)
+  }
 }
 
-const displayOptionsWithExchangeData = (currencyRates, currency2) => {
+const fillSelectOptionsWithExchangeData = (currencyRates, currency2) => {
   const currencyDataKeys = Object.keys(currencyRates)
 
   currencyDataKeys.forEach(key => {
-    const option1 = createOptionElement()
-    const option2 = createOptionElement()
+    const primaryOption = createOptionElement()
+    const secondaryOption = createOptionElement()
 
-    option1.textContent = key
-    option2.textContent = key
+    primaryOption.textContent = key
+    secondaryOption.textContent = key
 
     if (key === currency2) {
-      option2.setAttribute('selected', '')
+      secondaryOption.setAttribute('selected', '')
     }
 
-    currencyOneSelect.insertAdjacentElement('beforeend', option1)
-    currencyTwoSelect.insertAdjacentElement('beforeend', option2)
+    currencyOneSelect.insertAdjacentElement('beforeend', primaryOption)
+    currencyTwoSelect.insertAdjacentElement('beforeend', secondaryOption)
   })
 }
 
@@ -45,40 +56,55 @@ const updateConvertedParagraph = currency2 => {
 const updateConversionPrecisionParagraph = (currency1, currency2) => {
   const { conversion_rates } = exchangeRateData
 
-  displayOptionsWithExchangeData(conversion_rates, currency2)
-
   conversionPrecisionParagraph.textContent =
     `1 ${currency1} = ${conversion_rates[currency2]} ${currency2}`
-  convertedValueParagraph.textContent = conversion_rates[currency2].toFixed(2)
 }
 
 const updateMultipliedConvertedParagraph = (multiplier, currency2) => {
   const { conversion_rates } = exchangeRateData
 
   convertedValueParagraph.textContent =
-    (conversion_rates[currencyTwoSelect.value]).toFixed(2)
+    (multiplier * conversion_rates[currency2]).toFixed(2)
+}
 
-  conversionPrecisionParagraph.textContent =
-    `1 ${currencyOneSelect.value} = ${conversion_rates[currencyTwoSelect.value]} ${currencyTwoSelect.value}`
-})
-
-currencyTwoSelect.addEventListener('input', event => {
-  const inputValue = event.target.value
+const setExchangeInfo = async (currency1, currency2) => {
+  const endpoint = getCurrencyEndPoint(currency1)
+  exchangeRateData = await fetchExchangeData(endpoint)
   const { conversion_rates } = exchangeRateData
 
-  convertedValueParagraph.textContent =
-    (conversion_rates[inputValue]).toFixed(2)
+  fillSelectOptionsWithExchangeData(conversion_rates, currency2)
+  updateConversionPrecisionParagraph(currency1, currency2)
+  updateConvertedParagraph(currency2)
+}
 
-  conversionPrecisionParagraph.textContent =
-    `1 ${currencyOneSelect.value} = ${conversion_rates[inputValue]} ${currencyTwoSelect.value}`
-})
+const displayPrimaryCurrencyValue = async event => {
+  const currency1Value = event.target.value
+  const currency2Value = currencyTwoSelect.value
+  const endpoint = getCurrencyEndPoint(currency1Value)
 
-currencyOneTimesInput.addEventListener('input', event => {
+  exchangeRateData = await fetchExchangeData(endpoint)
+
+  updateConversionPrecisionParagraph(currency1Value, currency2Value)
+  updateConvertedParagraph(currency2Value)
+}
+
+const displaySecondaryCurrencyValue = event => {
+  const currency1Value = currencyOneSelect.value
+  const currency2Value = event.target.value
+
+  updateConversionPrecisionParagraph(currency1Value, currency2Value)
+  updateConvertedParagraph(currency2Value)
+}
+
+const multiplyCurrentCurrency = event => {
   const inputTimes = event.target.value
-  const { conversion_rates } = exchangeRateData
+  const currency2Value = currencyTwoSelect.value
 
-  convertedValueParagraph.textContent =
-    (inputTimes * conversion_rates[currencyTwoSelect.value]).toFixed(2)
-})
+  updateMultipliedConvertedParagraph(inputTimes, currency2Value)
+}
+
+currencyOneSelect.addEventListener('input', displayPrimaryCurrencyValue)
+currencyTwoSelect.addEventListener('input', displaySecondaryCurrencyValue)
+currencyOneTimesInput.addEventListener('input', multiplyCurrentCurrency)
 
 setExchangeInfo('USD', 'BRL')
