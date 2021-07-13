@@ -13,21 +13,22 @@ let exchangeRateData = {}
 
 const closeAlert = event => event.target.classList.remove('show')
 const createOptionElement = () => document.createElement('option')
-
 const getCurrencyEndPoint = currency =>
   `https://v6.exchangerate-api.com/v6/${APIKey}/latest/${currency}`
 
 const fetchExchangeData = async endpoint => {
   try {
     const response = await fetch(endpoint)
+    const exchangeData = await response.json()
 
-    if (response.result === 'error') {
-      throw new Error('Não foi possível obter as informações.')
+    if (exchangeData.result === 'error') {
+      throw new Error(exchangeData['error-type'])
     }
 
-    return response.json()
+    return exchangeData
   } catch (error) {
-    alert(error.message)
+    bootstrapAlert.classList.add('show')
+    bootstrapAlert.textContent = error
   }
 }
 
