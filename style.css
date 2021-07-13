@@ -13,3 +13,13 @@ body {
 .conversion-precision {
   color: #452B4E;
 }
+
+.alert {
+  font-weight: bold;
+}
+.hidden {
+  display: none;
+}
+.show {
+  display: block;
+}
