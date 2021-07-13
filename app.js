@@ -63,11 +63,11 @@ const updateConversionPrecisionParagraph = (currency1, currency2) => {
     `1 ${currency1} = ${conversion_rates[currency2]} ${currency2}`
 }
 
-const updateMultipliedConvertedParagraph = (multiplier, currency2) => {
+const updateMultipliedConvertedParagraph = (currency) => {
   const { conversion_rates } = exchangeRateData
 
   convertedValueParagraph.textContent =
-    (multiplier * conversion_rates[currency2]).toFixed(2)
+    (currencyOneTimesInput.value * conversion_rates[currency]).toFixed(2)
 }
 
 const setExchangeInfo = async (currency1, currency2) => {
@@ -78,6 +78,7 @@ const setExchangeInfo = async (currency1, currency2) => {
   fillSelectOptionsWithExchangeData(conversion_rates, currency2)
   updateConversionPrecisionParagraph(currency1, currency2)
   updateConvertedParagraph(currency2)
+  updateMultipliedConvertedParagraph(currency2)
 }
 
 const displayPrimaryCurrencyValue = async event => {
@@ -89,6 +90,7 @@ const displayPrimaryCurrencyValue = async event => {
 
   updateConversionPrecisionParagraph(currency1Value, currency2Value)
   updateConvertedParagraph(currency2Value)
+  updateMultipliedConvertedParagraph(currency2Value)
 }
 
 const displaySecondaryCurrencyValue = event => {
@@ -97,13 +99,12 @@ const displaySecondaryCurrencyValue = event => {
 
   updateConversionPrecisionParagraph(currency1Value, currency2Value)
   updateConvertedParagraph(currency2Value)
+  updateMultipliedConvertedParagraph(currency2Value)
 }
 
-const multiplyCurrentCurrency = event => {
-  const inputTimes = event.target.value
+const multiplyCurrentCurrency = () => {
   const currency2Value = currencyTwoSelect.value
-
-  updateMultipliedConvertedParagraph(inputTimes, currency2Value)
+  updateMultipliedConvertedParagraph(currency2Value)
 }
 
 currencyOneSelect.addEventListener('input', displayPrimaryCurrencyValue)
