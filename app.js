@@ -6,10 +6,12 @@ const convertedValueParagraph = document
   .querySelector('[data-js="converted-value"]')
 const conversionPrecisionParagraph = document
   .querySelector('[data-js="conversion-precision"]')
+const bootstrapAlert = document.querySelector('.alert')
 
 const APIKey = 'e3883a0683a029c56239ccac'
 let exchangeRateData = {}
 
+const closeAlert = event => event.target.classList.remove('show')
 const createOptionElement = () => document.createElement('option')
 
 const getCurrencyEndPoint = currency =>
@@ -106,5 +108,6 @@ const multiplyCurrentCurrency = event => {
 currencyOneSelect.addEventListener('input', displayPrimaryCurrencyValue)
 currencyTwoSelect.addEventListener('input', displaySecondaryCurrencyValue)
 currencyOneTimesInput.addEventListener('input', multiplyCurrentCurrency)
+bootstrapAlert.addEventListener('click', closeAlert)
 
 setExchangeInfo('USD', 'BRL')
