@@ -19,6 +19,11 @@ const getCurrencyEndPoint = currency =>
 const fetchExchangeData = async endpoint => {
   try {
     const response = await fetch(endpoint)
+
+    if (!response.ok) {
+      throw new Error('Sua conexão falhou. Não foi possível obter os dados.')
+    }
+
     const exchangeData = await response.json()
 
     if (exchangeData.result === 'error') {
