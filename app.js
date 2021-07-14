@@ -16,6 +16,14 @@ const createOptionElement = () => document.createElement('option')
 const getCurrencyEndPoint = currency =>
   `https://v6.exchangerate-api.com/v6/${APIKey}/latest/${currency}`
 
+const getErrorMessage = errorType => ({
+  'unsupported-code': 'A moeda não existe em nosso banco de dados.',
+  'malformed-request': 'Seu request precisa segruir a estrutura à seguir: https://v6.exchangerate-api.com/v6/YOUR-API-KEY/latest/USD',
+  'invalid-key': 'Sua chave da API não é válida.',
+  'inactive-account': 'Email não confirmado, por favor confirme seu email.',
+  'quota-reached': 'Você atingiu o limite de requisições que seu plano pode efetuar.'
+})[errorType] || 'Não foi possível obter as informações.'
+
 const fetchExchangeData = async endpoint => {
   try {
     const response = await fetch(endpoint)
@@ -27,13 +35,13 @@ const fetchExchangeData = async endpoint => {
     const exchangeData = await response.json()
 
     if (exchangeData.result === 'error') {
-      throw new Error(exchangeData['error-type'])
+      throw new Error(getErrorMessage(exchangeData['error-type']))
     }
 
     return exchangeData
   } catch (error) {
     bootstrapAlert.classList.add('show')
-    bootstrapAlert.textContent = error
+    bootstrapAlert.textContent = `Oops! ${error.message}`
   }
 }
 
