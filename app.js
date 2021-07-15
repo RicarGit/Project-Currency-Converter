@@ -16,6 +16,11 @@ const createOptionElement = () => document.createElement('option')
 const getCurrencyEndPoint = currency =>
   `https://v6.exchangerate-api.com/v6/${APIKey}/latest/${currency}`
 
+const showAlert = errorMessage => {
+  bootstrapAlert.classList.add('show')
+  bootstrapAlert.textContent = `Oops! ${errorMessage}`
+}
+
 const getErrorMessage = errorType => ({
   'unsupported-code': 'A moeda não existe em nosso banco de dados.',
   'malformed-request': 'Seu request precisa segruir a estrutura à seguir: https://v6.exchangerate-api.com/v6/YOUR-API-KEY/latest/USD',
@@ -40,8 +45,7 @@ const fetchExchangeData = async endpoint => {
 
     return exchangeData
   } catch (error) {
-    bootstrapAlert.classList.add('show')
-    bootstrapAlert.textContent = `Oops! ${error.message}`
+    showAlert(error.message)
   }
 }
 
