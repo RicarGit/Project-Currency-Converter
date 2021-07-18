@@ -9,17 +9,33 @@ const conversionPrecisionParagraph = document
 const bootstrapAlert = document.querySelector('.alert')
 
 const APIKey = 'e3883a0683a029c56239ccac'
-let exchangeRateData = {}
-
-const closeAlert = event => event.target.classList.remove('show')
-const createOptionElement = () => document.createElement('option')
-const getCurrencyEndPoint = currency =>
-  `https://v6.exchangerate-api.com/v6/${APIKey}/latest/${currency}`
 
 const showAlert = errorMessage => {
   bootstrapAlert.classList.add('show')
   bootstrapAlert.textContent = `Oops! ${errorMessage}`
 }
+
+const state = (() => {
+  let exchangeRateData = {}
+
+  return {
+    getExchangeRateData: () => exchangeRateData,
+    setExchangeRateData: newExchangeRateData => {
+      if (!newExchangeRateData.conversion_rates) {
+        showAlert('O objeto precisa ter uma propriedade conversion_rates')
+        return
+      }
+
+      exchangeRateData = newExchangeRateData
+      return exchangeRateData
+    }
+  }
+})()
+
+const closeAlert = event => event.target.classList.remove('show')
+const createOptionElement = () => document.createElement('option')
+const getCurrencyEndPoint = currency =>
+  `https://v6.exchangerate-api.com/v6/${APIKey}/latest/${currency}`
 
 const getErrorMessage = errorType => ({
   'unsupported-code': 'A moeda não existe em nosso banco de dados.',
@@ -68,20 +84,20 @@ const fillSelectOptionsWithExchangeData = (currencyRates, currency2) => {
   })
 }
 
-const updateConvertedParagraph = currency2 => {
-  const { conversion_rates } = exchangeRateData
+const updateConvertedParagraph = async currency2 => {
+  const { conversion_rates } = state.getExchangeRateData()
   convertedValueParagraph.textContent = conversion_rates[currency2].toFixed(2)
 }
 
 const updateConversionPrecisionParagraph = (currency1, currency2) => {
-  const { conversion_rates } = exchangeRateData
+  const { conversion_rates } = state.getExchangeRateData()
 
   conversionPrecisionParagraph.textContent =
     `1 ${currency1} = ${conversion_rates[currency2]} ${currency2}`
 }
 
 const updateMultipliedConvertedParagraph = (currency) => {
-  const { conversion_rates } = exchangeRateData
+  const { conversion_rates } = state.getExchangeRateData()
 
   convertedValueParagraph.textContent =
     (currencyOneTimesInput.value * conversion_rates[currency]).toFixed(2)
@@ -89,8 +105,8 @@ const updateMultipliedConvertedParagraph = (currency) => {
 
 const setExchangeInfo = async (currency1, currency2) => {
   const endpoint = getCurrencyEndPoint(currency1)
-  exchangeRateData = await fetchExchangeData(endpoint)
-  const { conversion_rates } = exchangeRateData
+  const { conversion_rates } = state
+    .setExchangeRateData(await fetchExchangeData(endpoint))
 
   fillSelectOptionsWithExchangeData(conversion_rates, currency2)
   updateConversionPrecisionParagraph(currency1, currency2)
@@ -103,7 +119,7 @@ const displayPrimaryCurrencyValue = async event => {
   const currency2Value = currencyTwoSelect.value
   const endpoint = getCurrencyEndPoint(currency1Value)
 
-  exchangeRateData = await fetchExchangeData(endpoint)
+  state.setExchangeRateData(await fetchExchangeData(endpoint))
 
   updateConversionPrecisionParagraph(currency1Value, currency2Value)
   updateConvertedParagraph(currency2Value)
